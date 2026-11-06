@@ -264,7 +264,7 @@ CursorT = TypeVar("CursorT")
 
 
 def trace_integration(
-    connect_module: Callable[..., Any],
+    connect_module: Any,
     connect_method_name: str,
     database_system: str,
     connection_attributes: dict[str, Any] | None = None,
@@ -280,7 +280,7 @@ def trace_integration(
     https://www.python.org/dev/peps/pep-0249/
 
     Args:
-        connect_module: Module name where connect method is available.
+        connect_module: Module or class where the connect method is available.
         connect_method_name: The connect method name.
         database_system: An identifier for the database management system (DBMS)
             product being used.
@@ -317,7 +317,7 @@ def trace_integration(
 # pylint: disable-next=too-many-positional-arguments
 def wrap_connect(
     name: str,
-    connect_module: Callable[..., Any],
+    connect_module: Any,
     connect_method_name: str,
     database_system: str,
     connection_attributes: dict[str, Any] | None = None,
@@ -334,7 +334,7 @@ def wrap_connect(
     https://www.python.org/dev/peps/pep-0249/
 
     Args:
-        connect_module: Module name where connect method is available.
+        connect_module: Module or class where the connect method is available.
         connect_method_name: The connect method name.
         database_system: An identifier for the database management system (DBMS)
             product being used.
@@ -382,12 +382,12 @@ def wrap_connect(
         _logger.warning("Failed to integrate with DB API. %s", str(ex))
 
 
-def unwrap_connect(connect_module: Callable[..., Any], connect_method_name: str):
+def unwrap_connect(connect_module: Any, connect_method_name: str):
     """Disable integration with DB API library.
     https://www.python.org/dev/peps/pep-0249/
 
     Args:
-        connect_module: Module name where the connect method is available.
+        connect_module: Module or class where the connect method is available.
         connect_method_name: The connect method name.
     """
     unwrap(connect_module, connect_method_name)
@@ -404,7 +404,7 @@ def instrument_connection(
     capture_parameters: bool = False,
     enable_commenter: bool = False,
     commenter_options: dict[str, Any] | None = None,
-    connect_module: Callable[..., Any] | None = None,
+    connect_module: Any = None,
     enable_attribute_commenter: bool = False,
     db_api_integration_factory: type[DatabaseApiIntegration] | None = None,
     meter_provider: MeterProvider | None = None,
@@ -423,7 +423,7 @@ def instrument_connection(
         capture_parameters: Configure if db.statement.parameters should be captured.
         enable_commenter: Flag to enable/disable sqlcommenter.
         commenter_options: Configurations for tags to be appended at the sql query.
-        connect_module: Module name where connect method is available.
+        connect_module: Module or class where the connect method is available.
         enable_attribute_commenter: Flag to enable/disable sqlcomment inclusion in `db.statement` and/or `db.query.text` span attribute. Only available if enable_commenter=True.
         db_api_integration_factory: A class or factory function to use as a
             replacement for :class:`DatabaseApiIntegration`. Can be used to
@@ -487,7 +487,7 @@ class DatabaseApiIntegration:
         capture_parameters: bool = False,
         enable_commenter: bool = False,
         commenter_options: dict[str, Any] | None = None,
-        connect_module: Callable[..., Any] | None = None,
+        connect_module: Any = None,
         enable_attribute_commenter: bool = False,
         meter_provider: MeterProvider | None = None,
     ):
